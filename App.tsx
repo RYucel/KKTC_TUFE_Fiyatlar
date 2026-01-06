@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import Controls from './components/Controls';
@@ -23,7 +22,6 @@ const App: React.FC = () => {
   const [data, setData] = useState<MarketDataPoint[]>([]);
   const [availableItems, setAvailableItems] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isFallback, setIsFallback] = useState(false);
   
   const [selectedItems, setSelectedItems] = useState<string[]>(['Ekmek', 'Benzin']);
   const [currency, setCurrency] = useState<Currency>(Currency.TRY);
@@ -33,28 +31,17 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
         setLoading(true);
-        const result = await loadMarketData();
-        setData(result.data);
-        setAvailableItems(result.items);
-        setIsFallback(!!result.isFallback);
-        
-        if (result.data.length > 0) {
-             const min = result.data[0].date;
-             const max = result.data[result.data.length - 1].date;
+        const { data: loadedData, items } = await loadMarketData();
+        setData(loadedData);
+        setAvailableItems(items);
+        if (loadedData.length > 0) {
+             const min = loadedData[0].date;
+             const max = loadedData[loadedData.length - 1].date;
+             setDateRange([min, max]);
              
-             // If using fallback (short duration), adjust range to fit data
-             if (result.isFallback) {
-                 setDateRange([min, max]);
-             } else {
-                 // Default to full range or last 5 years if full data
-                 setDateRange(['2020-01-01', max]);
-             }
-             
-             // Ensure selected items exist in the loaded dataset
-             const validItems = result.items;
-             const newSelection = selectedItems.filter(i => validItems.includes(i));
-             if (newSelection.length === 0 && validItems.length > 0) {
-                 setSelectedItems(validItems.slice(0, 2));
+             // If initial selection items aren't valid, pick first few
+             if (!items.includes('Ekmek')) {
+                 setSelectedItems(items.slice(0, 3));
              }
         }
         setLoading(false);
@@ -87,17 +74,6 @@ const App: React.FC = () => {
              </div>
         ) : (
             <>
-                {isFallback && (
-                    <div className="bg-yellow-900/40 border-b border-yellow-700/50 px-4 py-3 flex items-center justify-center gap-2 text-yellow-200 text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                        <span>
-                            <strong>Tam Veri Seti Yüklenemedi:</strong> 'GRETL_TUFE.csv' dosyası bulunamadı. Son 1 yıllık örnek veri gösteriliyor. (Dosyayı 'public' klasörüne ekleyiniz)
-                        </span>
-                    </div>
-                )}
-                
                 <Controls 
                   selectedItems={selectedItems}
                   onItemsChange={setSelectedItems}
