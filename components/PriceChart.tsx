@@ -161,8 +161,8 @@ const PriceChart: React.FC<PriceChartProps> = ({ data, selectedItems, currency, 
   const effectiveScale = isLogSafe ? 'log' : 'linear';
 
   return (
-    <div className="h-[500px] w-full bg-slate-900 border border-slate-800 rounded-lg p-1 sm:p-4">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[500px] w-full bg-slate-900 border border-slate-800 rounded-lg p-1 sm:p-4" style={{ minHeight: '500px' }}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={true} horizontal={true} />
           <XAxis 

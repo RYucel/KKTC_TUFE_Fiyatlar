@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Currency, ScaleType } from '../types';
-import { availableItems } from '../services/dataService';
 
 interface ControlsProps {
   selectedItems: string[];
@@ -13,6 +12,7 @@ interface ControlsProps {
   onDateRangeChange: (range: [string, string]) => void;
   minDate: string;
   maxDate: string;
+  availableItems: string[];
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -25,7 +25,8 @@ const Controls: React.FC<ControlsProps> = ({
   dateRange,
   onDateRangeChange,
   minDate,
-  maxDate
+  maxDate,
+  availableItems
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
