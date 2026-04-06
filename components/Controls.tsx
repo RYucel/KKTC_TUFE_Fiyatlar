@@ -163,7 +163,11 @@ const Controls: React.FC<ControlsProps> = ({
                         value={formatMonth(dateRange[1])} 
                         min={formatMonth(dateRange[0])}
                         max={formatMonth(maxDate)}
-                        onChange={(e) => onDateRangeChange([dateRange[0], `${e.target.value}-01`])}
+                        onChange={(e) => {
+                            const date = new Date(`${e.target.value}-01`);
+                            const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0];
+                            onDateRangeChange([dateRange[0], endOfMonth]);
+                        }}
                         className="bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-md px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>

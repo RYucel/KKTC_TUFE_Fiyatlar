@@ -53,8 +53,10 @@ const App: React.FC = () => {
   const filteredData = useMemo(() => {
     if (data.length === 0) return [];
     const start = new Date(dateRange[0]).getTime();
-    const end = new Date(dateRange[1]).getTime();
-    return data.filter(d => d.timestamp >= start && d.timestamp <= end);
+    const end = new Date(dateRange[1]);
+    end.setHours(23, 59, 59, 999);
+    const endTime = end.getTime();
+    return data.filter(d => d.timestamp >= start && d.timestamp <= endTime);
   }, [data, dateRange]);
 
   const minDataDate = data.length > 0 ? data[0].date : '2015-01-01';
